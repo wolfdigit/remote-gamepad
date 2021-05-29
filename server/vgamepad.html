@@ -1,0 +1,43 @@
+<html>
+<head>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<style>
+.btn-control {
+  width: 50px;
+  height: 50px;
+}
+</style>
+</head>
+
+<body>
+<div>
+	<label for="name">name: </label><input type="text" name="name" id="name" /><input type="button" id="set-name" value="set" />
+</div>
+
+<div>
+	<button class="btn-control" value="X">X</button>
+	<button class="btn-control" value="Y">Y</button>
+	<button class="btn-control" value="A">A</button>
+	<button class="btn-control" value="B">B</button>
+</div>
+
+<script>
+  var socket = io();
+  $('#set-name').click(() => {
+    socket.emit('identify', $('#name').val());
+  });
+  
+  $('.btn-control').on('mousedown mouseup touchstart touchend', e => {
+	console.log(e);
+	if (['mousedown', 'touchstart'].includes(e.type)) {
+	  socket.emit('btn-control', {event: 'down', value: e.target.value});
+	} else if (['mouseup', 'touchend'].includes(e.type)) {
+	  socket.emit('btn-control', {event: 'up', value: e.target.value});
+	}
+	e.preventDefault();
+  });
+</script>
+
+</body>
+</html>
